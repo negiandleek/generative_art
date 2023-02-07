@@ -6,22 +6,37 @@ const color = '#69d9de'
 const numOfParticles = 50
 
 class Orbit{
-  constructor(canvasWidth, canvasHeight, radius){
-    this.centerX = canvasWidth / 2;
-    this.centerY = canvasHeight / 2;
+  constructor(centerX, centerY, radius){
+    this.centerX = centerX;
+    this.centerY = centerY;
+    this.originRadius = radius;
     this.radius = radius;
+    this.originRadius = radius
+    this.radian = radians(90)
+  }
+  scale(){
+    this.radian += 0.0002
+    this.radius = this.originRadius * sin(this.radian)
   }
 }
 
 class Particle{
   constructor(radius, radian, orbit){
     this.radius = radius;
-    this.radian = radian;
-    this.orbit = orbit;
+    this.baseRadian = radian;
+    this.partRadian = 0;
+    this.baseOrbit = orbit;
+    this.partOrbit = new Orbit(orbit.centerX, orbit.centerY, 40)
   }
   position(){
-    this.x = this.orbit.centerX + (this.orbit.radius * cos(this.radian))
-    this.y = this.orbit.centerY + (this.orbit.radius * sin(this.radian))
+    this.baseOrbit.scale();
+    this.partRadian += random(0, 0.25)
+
+    const baseX = this.baseOrbit.centerX + (this.baseOrbit.radius * cos(this.baseRadian))
+    const baseY = this.baseOrbit.centerY + (this.baseOrbit.radius * sin(this.baseRadian))
+
+    this.x = baseX + this.partOrbit.radius * cos(this.partRadian)
+    this.y = baseY + this.partOrbit.radius * sin(this.partRadian)
   }
   draw(){
     this.position()
@@ -33,7 +48,7 @@ class Particle{
 
 
 function setupOrbit(){
-  return new Orbit(canvasWidth, canvasHeight, 100)
+  return new Orbit(canvasWidth / 2, canvasHeight / 2, 100)
 }
 
 function setupParticles(orbit){

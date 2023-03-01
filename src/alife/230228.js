@@ -1,26 +1,26 @@
 const canvasWidth = 480;
 const canvasHeight = 480;
 
-const initialPlantNum = 10;
+const initialPlantNum = 1;
 const plants = []
 
 class Plant {
-	maxEnergy = 10;
-  minEnergy = 6;
-  maxLifeSpan = 1000;
-  minLifeSpan = 50;
-  sickProb = 0.01;
+	static maxEnergy = 100;
+  static minEnergy = 6;
+  static maxLifeSpan = 1000;
+  static sickProb = 0.01;
+  static reproduceBaseCycle = 200
   constructor(isGermination=false) {
     this.x = random(width);
     this.y = random(height);
-		this.maxEnergy = isGermination ? 0 : max(round(randomGaussian(Plant.maxEnergy, 2)), Plant.minEnergy);
-    this.energy = isGermination ? 0 : this.maxEnergy
-    console.log(randomGaussian(Plant.maxLifeSpan, 1))
-    this.lifespan = max(round(randomGaussian(Plant.maxLifeSpan, 50)), Plant.minLifeSpan);
+		this.primeEnergy = randomGaussian(Plant.maxEnergy, 10);
+    this.energy = isGermination ? 0 : this.primeEnergy
+    this.lifespan = randomGaussian(Plant.maxLifeSpan, 50)
     this.time = isGermination ? 0 : this.lifespan * 0.2
     this.status = isGermination ? 'SEEDLING' : 'MATURE'
+    this.reproduceCycle = round(randomGaussian(Plant.reproduceBaseCycle, 50))
   }
-  updateStatus(){
+  lifeStatus(){
     if(this.time < this.lifespan * 0.2){
       this.status = 'SEEDLING'
     }else if(this.time < this.lifespan * 0.8){
@@ -29,25 +29,34 @@ class Plant {
       this.status = 'SENESCENT'
     }
   }
-  updateTime(){
+  reproduce(){
+    if(this.status == 'MATURE'){
+      const maturityPeriod = round(this.time - this.lifespan * 0.2)
+      if(maturityPeriod % this.reproduceCycle == 0){
+        plants.push(new Plant(true))
+      }
+    }
+  }
+  lifeTime(){
     if(this.status == 'SEEDLING'){
-      this.energy += this.maxEnergy / (this.lifespan * 0.2)
+      this.energy += this.primeEnergy / (this.lifespan * 0.2)
     }else if(this.status == 'SENESCENT'){
-      this.energy -= this.maxEnergy / (this.lifespan * 0.8)
+      this.energy -= this.primeEnergy / (this.lifespan * 0.8)
       if (this.energy <= 0) {
-        foods.splice(foods.indexOf(this), 1);
+        plants.splice(plants.indexOf(this), 1);
       }
     }
   }
   update(){
     this.time++
-    console.log(this.time, this.lifespan)
-    this.updateStatus()
-    this.updateTime()
+    this.lifeStatus();
+    this.reproduce()
+    this.lifeTime()
   }
   draw() {
     this.update();
-    fill(0,0,0,100);
+    const alpha = map(this.energy, 0, this.primeEnergy, 0, 255)
+    fill(0,0,0, alpha);
     noStroke();
     ellipse(this.x, this.y, 10, 10);
   }

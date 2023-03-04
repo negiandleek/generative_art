@@ -6,8 +6,8 @@ const molds = []
 
 class Mold {
   static reproduceBaseCycle = 200
-  static dispersalDistance = 40
-  static maxLifeSpan = 750
+  static dispersalDistance = 50
+  static maxLifeSpan = 300
   static randomPointAround(vector) {
     let angle = random(TWO_PI);
     let r = random(Mold.dispersalDistance);
@@ -18,7 +18,7 @@ class Mold {
   constructor(vector, isNewborn=false) {
     this.prevPosition = vector
     this.position = isNewborn ? Mold.randomPointAround(vector): vector;
-    this.lifespan = randomGaussian(Mold.maxLifeSpan, 50)
+    this.lifespan = Mold.maxLifeSpan
     this.time = 0
     this.reproduceCycle = round(randomGaussian(Mold.reproduceBaseCycle, 50))
     this.isNewborn = isNewborn
@@ -44,12 +44,12 @@ class Mold {
   }
   draw() {
     this.update();
-    // const alpha = map(this.energy, 0, this.primeEnergy, 0, 255)
-    fill(0,0,0, 100);
+    const alpha = map(this.time, 0, Mold.maxLifeSpan, 50, 255)
+    fill(0,0,0,alpha);
     noStroke();
     ellipse(this.position.x, this.position.y, 1, 1);
     if(this.isNewborn){
-      stroke(0, 0, 0, 100);
+      stroke(0, 0, 0,alpha);
       line(this.prevPosition.x, this.prevPosition.y, this.position.x, this.position.y);
     }
   }
@@ -73,7 +73,7 @@ function draw(){
   if(time % 100 == 0){
     console.log(time)
   }
-  if(time >= 2800){
+  if(time >= 2200){
     return
   }
 	background(240);

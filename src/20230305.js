@@ -6,27 +6,47 @@ function setup() {
   createCanvas(width, height);
   background(240);
   strokeWeight(strokeWidth)
-  const xStep = 20
-  const yStep = 40
+  const xMargin = 80
+  const xStep = 5
   const yMargin = 80
+  const yStep = 5
+  const weight = 10
   let lastY = -999;
   let lastX = -999;
   stroke(0)
-  for(let x=-xStep; x <= width; x+=xStep){
+  for(let x=xMargin; x <= width - xMargin * 1.5; x+=xStep){
     let xnoise = random(10)
-    let i = 0;
-    for(let y=yMargin; y <= height - yMargin; y+=yStep){
-      if(i !=0) break
-      let xx = x + 10 + noise(xnoise) * 80
+    let yrandom = random(10)
+    const ynoise = noise(yrandom) * 100
+    const baseY = (yMargin - ynoise / 2) + ynoise
+
+    for(let y=baseY/2; y <= height - (xMargin / 1.5); y+=yStep){
+      let nextX = x + 10 + noise(xnoise) * weight
       if(lastY > -999){
-        line(xx, y, lastX, lastY)
+        line(nextX, y, lastX, lastY)
       }
-      lastX = xx
+      lastX = nextX
       lastY = y
       xnoise += 0.1
     }
-    i++
     lastX = -999
     lastY = -999
   }
+  // for(let y=yMargin; y <= height - yMargin * 1.5; y+=yStep){
+  //   let ynoise = random(10)
+  //   let xrandom = random(10)
+  //   const xnoise = noise(xrandom) * 100
+  //   const baseX = (yMargin - xnoise / 2) + xnoise
+  //   for(let x=baseX/2; x <= width - xMargin * 1.5; x+=xStep){
+  //     let nextY = y + 10 + noise(ynoise) * weight
+  //     if(lastX > -999){
+  //       line(x, nextY, lastX, lastY)
+  //     }
+  //     lastY = nextY
+  //     lastX = x
+  //     ynoise += 0.1
+  //   }
+  //   lastX = -999
+  //   lastY = -999
+  // }
 }

@@ -2,7 +2,7 @@
 // https://on.soundcloud.com/5nsFB 
 
 let song, fft;
-
+const bin = 64
 
 function preload() {
   song = loadSound('./sound.mp3');
@@ -12,31 +12,31 @@ const canvasWidth = 400;
 const canvasHeight = 400;
 function setup() {
   createCanvas(400, 400);
-  fft = new p5.FFT();
-  song.play();
+  fft = new p5.FFT(0.9, bin);
 }
 
 function draw() {
   background(0);
-
-  let waveform = fft.waveform();
-  
   noFill();
   beginShape();
   stroke('#fb8500');
+  let waveform = fft.analyze();
 
-  beginShape();
   for (let i = 0; i < waveform.length; i++) {
-    let angle = map(i, 0, waveform.length, 0, TWO_PI)
-    let radius = map(waveform[i], -1, 1, 0, height / 2);
-    let x = (canvasWidth / 2) + radius * cos(angle);
-    let y = (canvasHeight / 2) + radius * sin(angle);
-    vertex(x, y);
+    let angle = map(i, 0, waveform.length, 0, TWO_PI);
+    // let radius = map(waveform[i], 0, 255, 50, 200);
+    let x = cos(angle);
+    let y = sin(angle) + canvasHeight / 2
+    // let x = map(i, 0, waveform.length, 0, canvasWidth - 15);
+    let rectWidth = 10;
+    let rectHeight = map(waveform[i], 0, 255, 0, 50);
+
+    push();
+    translate(200, y);
+    rotate(angle + PI / 2);
+    rect(x+10, 50, 2, rectHeight);
+    pop();
   }
-  endShape(CLOSE);
-  
-  
-  // text('Click to play/pause', 20, 20);
 }
 
 function mouseClicked() {

@@ -8,11 +8,9 @@ function preload() {
   song = loadSound('./sound.mp3');
 }
 
-const canvasWidth = 400;
-const canvasHeight = 400;
 function setup() {
   createCanvas(400, 400);
-  fft = new p5.FFT(0.9, bin);
+  fft = new p5.FFT(0.8, bin);
 }
 
 function draw() {
@@ -21,20 +19,20 @@ function draw() {
   beginShape();
   stroke('#fb8500');
   let waveform = fft.analyze();
+  let canvasWidth = width;
+  let canvasHeight = height;
 
+  let radius = 50;
   for (let i = 0; i < waveform.length; i++) {
     let angle = map(i, 0, waveform.length, 0, TWO_PI);
-    // let radius = map(waveform[i], 0, 255, 50, 200);
-    let x = cos(angle);
-    let y = sin(angle) + canvasHeight / 2
-    // let x = map(i, 0, waveform.length, 0, canvasWidth - 15);
-    let rectWidth = 10;
-    let rectHeight = map(waveform[i], 0, 255, 0, 50);
+    let x = radius * cos(angle) + canvasWidth / 2;
+    let y = radius * sin(angle) + canvasHeight / 2;
+    let rectHeight = map(waveform[i], 0, 255, 0, 100);
 
     push();
-    translate(200, y);
+    translate(x, y);
     rotate(angle + PI / 2);
-    rect(x+10, 50, 2, rectHeight);
+    rect(0, 0, 2, -rectHeight);
     pop();
   }
 }

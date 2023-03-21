@@ -1,9 +1,10 @@
+import {channel} from '../lib/midi'
+
 let audio;
-let fft;
 let amplitude;
-let color;
 let minAmplitudeForBeat = 0;
 let framesSinceLastBeat = 0;
+let palette;
 
 const beatHoldFrames = 40;
 const beatThreshold = 0.20; 
@@ -29,10 +30,11 @@ class MyColor{
   }
 }
 
-class Rect{
-  constructor(x,y){
+class Figure{
+  constructor(x,y, lineLength){
     this.x = x;
     this.y = y;
+    this.lineLength = lineLength;
     this.palette = new MyColor()
   }
   draw(isChangeColor){
@@ -42,35 +44,8 @@ class Rect{
     strokeWeight(5)
     stroke(this.palette.color)
     fill(this.palette.color)
-    line(this.x,this.y, this.x + 50, this.y + 50)
+    line(this.x,this.y, this.x + this.lineLength, this.y + this.lineLength)
     // rect(this.x,this.y, 25, 25)
-  }
-}
-
-function preload() {
-  audio = loadSound('/sound.mp3');
-}
-
-function setup() {
-  createCanvas(800, 800);
-  audio.loop();
-  amplitude = new p5.Amplitude();
-  palette = new MyColor()
-  noStroke()
-  
-  for(let i = 0; i < rects.length; i+=1){
-    rects[i] = new Rect(random(500), random(500))
-  }
-}
-
-function draw() {
-  background(0)
-  
-  const level = amplitude.getLevel();
-  const detectBeat = isDetectBeat(level);
-  
-  for(let i = 0; i < rects.length; i+=1){
-    rects[i].draw(detectBeat)
   }
 }
 
@@ -91,7 +66,35 @@ function isDetectBeat(level){
   }
 }
 
-function mouseClicked() {
+window.preload = () => {
+  audio = loadSound('/sound.mp3');
+}
+
+window.setup = () => {
+  createCanvas(1200, 800);
+  audio.loop();
+  amplitude = new p5.Amplitude();
+  palette = new MyColor()
+  noStroke()
+  
+  for(let i = 0; i < rects.length; i+=1){
+    const lineLength = random(50, 150)
+    rects[i] = new Figure(random(1200 - lineLength), random(800 - lineLength), lineLength)
+  }
+}
+
+window.draw = () => {
+  background(0)
+  
+  const level = amplitude.getLevel();
+  const detectBeat = isDetectBeat(level);
+  
+  for(let i = 0; i < rects.length; i+=1){
+    rects[i].draw(detectBeat)
+  }
+}
+
+window.mouseClicked = () => {
   if (audio.isPlaying()) {
     audio.pause();
   } else {

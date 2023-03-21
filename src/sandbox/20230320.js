@@ -1,7 +1,7 @@
+import {Palette} from '../lib/Palette'
+
 let audio;
-let fft;
 let amplitude;
-let color;
 let minAmplitudeForBeat = 0;
 let framesSinceLastBeat = 0;
 
@@ -11,66 +11,43 @@ const beatDecayRate = 0.98;
 
 const rects = new Array(500);
 
-class MyColor{
-  static colors = ['#F8C200', '#FB8500', '#FF5A30','#F12B63', '#FF2599', '#0EA5E6']
-  // static colors = ['#AA00FF', '#FF1492', '#ED0BE7', '#5EFA13','#EEEE0D']
-  constructor(colorIndex){
-    const index = colorIndex ?? Math.floor(random() * MyColor.colors.length)
-    this.color = MyColor.colors[index]
-  }
-  uniqRand(){
-    const filterdColors = MyColor.colors.filter((it)=> it != this.color);
-    this.color = filterdColors[Math.floor(random() * filterdColors.length)];
-    return this.color
-  }
-  rand(){
-    this.color = MyColor.colors[Math.floor(random() * MyColor.colors.length)];
-    return this.color
-  }
-}
-
-class Rect{
-  constructor(x,y){
-    this.x = x;
-    this.y = y;
-    this.palette = new MyColor()
-  }
-  draw(isChangeColor){
-    if(isChangeColor){
-      this.palette.uniqRand()
-    }
-    strokeWeight(5)
-    stroke(this.palette.color)
-    fill(this.palette.color)
-    line(this.x,this.y, this.x + 50, this.y + 50)
-    // rect(this.x,this.y, 25, 25)
-  }
-}
-
-function preload() {
-  audio = loadSound('/sound.mp3');
-}
-
-function setup() {
-  createCanvas(800, 800);
-  audio.loop();
+function setup(p5js) {
+  p5js.createCanvas(800, 800);
   amplitude = new p5.Amplitude();
-  palette = new MyColor()
-  noStroke()
+  p5js.noStroke()
   
   for(let i = 0; i < rects.length; i+=1){
-    rects[i] = new Rect(random(500), random(500))
+    rects[i] = new Rect(p5js, p5js.random(500), p5js.random(500))
   }
 }
 
-function draw() {
-  background(0)
+function draw(p5js) {
+  p5js.background(0)
   
   const level = amplitude.getLevel();
   const detectBeat = isDetectBeat(level);
   
   for(let i = 0; i < rects.length; i+=1){
     rects[i].draw(detectBeat)
+  }
+}
+
+class Rect{
+  constructor(p5js, x,y){
+    this.p5js = p5js
+    this.x = x;
+    this.y = y;
+    this.palette = new Palette(p5js)
+  }
+  draw(isChangeColor){
+    if(isChangeColor){
+      this.palette.uniqRand()
+    }
+    this.p5js.strokeWeight(5)
+    this.p5js.stroke(this.palette.color)
+    this.p5js.fill(this.palette.color)
+    this.p5js.line(this.x,this.y, this.x + 50, this.y + 50)
+    // this.p5js.rect(this.x,this.y, 25, 25)
   }
 }
 
@@ -96,5 +73,22 @@ function mouseClicked() {
     audio.pause();
   } else {
     audio.loop();
+  }
+}
+
+export const sketch = (p5js) => {
+  p5js.preload = () => {
+    audio = p5js.loadSound('/sound.mp3', (sound)=>{
+      // sound.loop()
+    });
+  }
+  p5js.setup = () => {
+    setup(p5js)
+  };
+  p5js.draw = () => {
+    draw(p5js)
+  }
+  p5js.mouseClicked = () => {
+    mouseClicked()
   }
 }

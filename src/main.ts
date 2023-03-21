@@ -1,1 +1,2 @@
-console.log('hello world!!')
+import { setupCounter } from '../lib/main'
+console.log('a')

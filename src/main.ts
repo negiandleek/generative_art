@@ -1,2 +1,2 @@
-import { setupCounter } from '../lib/main'
-console.log('a')
+import {  channel, value, on } from './lib/midi.js'
+console.log(channel, value, on)

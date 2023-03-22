@@ -1,11 +1,10 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
+import inject from '@rollup/plugin-inject';
 
 export default defineConfig({
-  build: {
-    lib: {
-      entry: './lib/main.ts',
-      name: 'Counter',
-      fileName: 'counter'
-    }
-  }
-})
+  plugins: [
+    inject({
+      p5: 'p5',
+    }),
+  ],
+});

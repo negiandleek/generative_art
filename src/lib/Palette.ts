@@ -5,7 +5,7 @@ export class Palette {
   color: string
   static colors = ['#F8C200', '#FB8500', '#FF5A30','#F12B63', '#FF2599', '#0EA5E6']
   // static colors = ['#AA00FF', '#FF1492', '#ED0BE7', '#5EFA13','#EEEE0D']
-  constructor(p5: p5, colorIndex: number){
+  constructor(p5: p5, colorIndex?: number){
     this.p5 = p5
     const index = colorIndex ?? Math.floor(this.p5.random() * Palette.colors.length)
     this.color = Palette.colors[index]

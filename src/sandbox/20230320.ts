@@ -1,7 +1,11 @@
+import type * as p5type from 'p5';
 import {Palette} from '../lib/Palette'
 
-let audio;
-let amplitude;
+// p5.soundをimportする
+const Amplitude = (p5 as any).Amplitude as p5type.Amplitude;
+
+let audio: p5type.SoundFile;
+let amplitude: p5type.Amplitude;
 let minAmplitudeForBeat = 0;
 let framesSinceLastBeat = 0;
 
@@ -11,9 +15,10 @@ const beatDecayRate = 0.98;
 
 const rects = new Array(500);
 
-function setup(p5js) {
+function setup(p5js: p5type) {
   p5js.createCanvas(800, 800);
-  amplitude = new p5.Amplitude();
+  // @ts-ignore
+  amplitude = new Amplitude();
   p5js.noStroke()
   
   for(let i = 0; i < rects.length; i+=1){
@@ -21,7 +26,7 @@ function setup(p5js) {
   }
 }
 
-function draw(p5js) {
+function draw(p5js: p5type) {
   p5js.background(0)
   
   const level = amplitude.getLevel();
@@ -33,13 +38,17 @@ function draw(p5js) {
 }
 
 class Rect{
-  constructor(p5js, x,y){
+  p5js: p5type
+  x: number
+  y: number
+  palette: Palette
+  constructor(p5js: p5type, x: number, y: number){
     this.p5js = p5js
     this.x = x;
     this.y = y;
     this.palette = new Palette(p5js)
   }
-  draw(isChangeColor){
+  draw(isChangeColor: boolean){
     if(isChangeColor){
       this.palette.uniqRand()
     }
@@ -51,7 +60,7 @@ class Rect{
   }
 }
 
-function isDetectBeat(level){
+function isDetectBeat(level: number){
   if (level  > minAmplitudeForBeat && level > beatThreshold){
     minAmplitudeForBeat = level * 1.25;
     framesSinceLastBeat = 0;
@@ -76,11 +85,9 @@ function mouseClicked() {
   }
 }
 
-export const sketch = (p5js) => {
+export const sketch = (p5js: p5type) => {
   p5js.preload = () => {
-    audio = p5js.loadSound('/sound.mp3', (sound)=>{
-      // sound.loop()
-    });
+    audio = p5js.loadSound('/sound.mp3')
   }
   p5js.setup = () => {
     setup(p5js)

@@ -1,11 +1,10 @@
-import type * as p5type from 'p5';
 import {Palette} from '../lib/Palette'
 
-// p5.soundをimportする
-const Amplitude = (p5 as any).Amplitude as p5type.Amplitude;
+// p5.soundに関するものをglobalからimportする
+const Amplitude = p5.Amplitude;
 
-let audio: p5type.SoundFile;
-let amplitude: p5type.Amplitude;
+let audio: p5.SoundFile;
+let amplitude: p5.Amplitude;
 let minAmplitudeForBeat = 0;
 let framesSinceLastBeat = 0;
 
@@ -15,7 +14,7 @@ const beatDecayRate = 0.98;
 
 const rects = new Array(500);
 
-function setup(p5js: p5type) {
+function setup(p5js: p5) {
   p5js.createCanvas(800, 800);
   // @ts-ignore
   amplitude = new Amplitude();
@@ -26,7 +25,7 @@ function setup(p5js: p5type) {
   }
 }
 
-function draw(p5js: p5type) {
+function draw(p5js: p5) {
   p5js.background(0)
   
   const level = amplitude.getLevel();
@@ -38,15 +37,15 @@ function draw(p5js: p5type) {
 }
 
 class Rect{
-  p5js: p5type
+  p5js: p5
   x: number
   y: number
   palette: Palette
-  constructor(p5js: p5type, x: number, y: number){
+  constructor(p5js: p5, x: number, y: number){
     this.p5js = p5js
     this.x = x;
     this.y = y;
-    this.palette = new Palette(p5js)
+    this.palette = new Palette()
   }
   draw(isChangeColor: boolean){
     if(isChangeColor){
@@ -85,7 +84,7 @@ function mouseClicked() {
   }
 }
 
-export const sketch = (p5js: p5type) => {
+export const sketch = (p5js: p5) => {
   p5js.preload = () => {
     audio = p5js.loadSound('/sound.mp3')
   }

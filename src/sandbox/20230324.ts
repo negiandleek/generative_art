@@ -1,6 +1,7 @@
+let prevBpmEstimate: number = 0;
 function calculateAverageBPM(bpmEstimates: Array<number>) {
   if (bpmEstimates.length < 4) {
-    return 0;
+    return prevBpmEstimate;
   }
 
   // BPM推定値をソートし、中央値を計算します。
@@ -45,6 +46,7 @@ export const sketch = (p: p5) => {
   	p.background(220);
     const timestamp = p.millis() / 1000
     const beatInterval = 60 / bpmEstimate; 
+    // console.log('bpm', bpmEstimate)
     if (timestamp - lastBeatTime >= beatInterval) {
       ellipseWidth = 50
       lastBeatTime = timestamp
@@ -69,13 +71,21 @@ export const sketch = (p: p5) => {
       const bpm = Math.floor(60000 / deltaTime);
       if (bpm >= MIN_BPM && bpm <= MAX_BPM) {
         bpmEstimates.push(bpm);
+      }else{
+        bpmEstimates = []
+        prevBpmEstimate = bpmEstimate
       }
       if (previousTimestamps.length > 10) {
         previousTimestamps.shift();
       }
     }
     previousTimestamps.push(timestamp)
-    bpmEstimate = calculateAverageBPM(bpmEstimates)
+    const averageBPM = calculateAverageBPM(bpmEstimates)
+    if(!averageBPM){
+      prevBpmEstimate = bpmEstimate
+    }else{
+      bpmEstimate = averageBPM
+    }
     circleSize = 25
 	}
 };

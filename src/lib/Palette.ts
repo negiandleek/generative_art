@@ -2,7 +2,7 @@ type colors = keyof typeof Palette.colors
 
 export class Palette{
   static colors = {
-    lollipop: ['#F8C200', '#FB8500', '#FF5A30','#F12B63', '#FF2599', '#0EA5E6'],
+    lollipop: ['#F8C200', '#FB8500', '#FF5A30','#F12B63', '#FF2599' /*,'#0EA5E6'*/, '#1A39C2'],
     neon: ['#AA00FF', '#FF1492', '#ED0BE7', '#5EFA13','#EEEE0D']
   }
   paletteType: colors
@@ -18,7 +18,13 @@ export class Palette{
     return this.color
   }
   rand(){
-    this.color = Palette.colors[Math.floor(Math.random() * Palette.colors[this.paletteType].length)];
+    const index = Math.floor(Math.random() * Palette.colors[this.paletteType].length);
+    this.color = Palette.colors[this.paletteType][index]
+    return this.color
+  }
+  next(){
+    const index = (Palette.colors[this.paletteType].indexOf(this.color) + 1) % Palette.colors[this.paletteType].length
+    this.color = Palette.colors[this.paletteType][index]
     return this.color
   }
 }
